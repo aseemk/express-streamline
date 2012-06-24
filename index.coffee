@@ -1,16 +1,3 @@
-# express-streamline.coffee
-# Monkey-patches Express to support Streamline syntax. Require this instead of
-# Express directly. TODO FIXME This doesn't monkey-patch HTTPS servers yet.
-#
-# Specifically, Express's next() callback isn't quite like the regular Node
-# style/convention -- you can't use it to signal completion w/out error.
-# That is, if you call next() at all -- even as next(undefined), which in
-# regular Node convention means "completed w/out error" -- Express goes into
-# error handling mode. And in this case, it chokes handling a null error.
-#
-# As a workaround for this, we wrap Express methods to support regular Node-
-# style callbacks, which lets us use Streamline syntax in our handlers.
-
 module.exports = express = require 'express'
 
 # wraps the streamline-style handler (req, res, _) to the style express
