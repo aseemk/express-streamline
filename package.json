@@ -10,6 +10,7 @@
 , "scripts": {}
 , "homepage": "https://github.com/aseemk/express-streamline"
 , "repository":
-  { "url": "git://github.com/aseemk/express-streamline.git"
+  { "type": "git"
+  , "url": "git://github.com/aseemk/express-streamline.git"
   }
 }
