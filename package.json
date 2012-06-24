@@ -1,0 +1,14 @@
+{ "name": "express-streamline"
+, "description": "Express monkey-patch to support Streamline syntax."
+, "version": "0.0.0"
+, "author": "Aseem Kishore <aseem.kishore@gmail.com>"
+, "dependencies": {}
+, "devDependencies": {}
+, "engines":
+  { "node": "*"
+  }
+, "homepage": "https://github.com/aseemk/express-streamline"
+, "repository":
+  { "url": "git://github.com/aseemk/express-streamline.git"
+  }
+}
