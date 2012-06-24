@@ -74,7 +74,7 @@ Investigate support for Express 3 / Connect 2.
 
 ## License
 
-MIT. &copy; 2012 Aseem Kishore &lt;aseem.kishore@gmail.com&gt;.
+MIT. &copy; 2012 Aseem Kishore.
 
 ## Credits
 
