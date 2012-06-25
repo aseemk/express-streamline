@@ -13,11 +13,11 @@ function wrap(handler) {
 
     if (handler.length >= 4) {
         return function (err, req, res, next) {
-            handler(err, req, res, callback(next));
+            return handler(err, req, res, callback(next));
         }
     } else {
         return function (req, res, next) {
-            handler(req, res, callback(next));
+            return handler(req, res, callback(next));
         }
     }
 }
@@ -39,7 +39,7 @@ function patch(verb) {
         }
 
         // finally, call the original method now with the updated args:
-        origAppVerb.apply(this, arguments);
+        return origAppVerb.apply(this, arguments);
     };
 }
 
