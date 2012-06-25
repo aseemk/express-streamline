@@ -29,10 +29,16 @@ var verbs = ['all', 'get', 'post', 'put', 'del', 'error'];
 function patch(verb) {
     var origAppVerb = app[verb];
     app[verb] = function () {
-        // wrap the handler function, which is the last argument:
+        // if a handler function is given, it'll be the last argument:
         var last = arguments.length - 1;
-        arguments[last] = wrap(arguments[last]);
-        // then call the original verb with this wrapped handler:
+        var lastArg = arguments[last];
+
+        // if there is one, wrap it:
+        if (typeof lastArg === 'function') {
+            arguments[last] = wrap(lastArg);
+        }
+
+        // finally, call the original method now with the updated args:
         origAppVerb.apply(this, arguments);
     };
 }
