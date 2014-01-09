@@ -1,13 +1,29 @@
 module.exports = express = require('express');
 
-// wraps the streamline-style handler (req, res, _) to the style express
-// requires (req, res, next). note that error handlers have an extra argument,
-// and express examines the route function's length to determine this!
-function wrap(handler) {
+//
+// Helper funciton to wraps the given Streamline-style handler (req, res, _)
+// to the style Express requires (req, res, next).
+// Returns the wrapped (req, res, next) handler for Express.
+//
+// If isMiddleware is true, the default action will be to continue (i.e. call
+// next) after the handler, unless the handler explicitly returns false.
+// Otherwise, the default action is to *not* continue, unless the handler
+// explicitly returns false.
+//
+// Note that error handlers have an extra argument, and Express examines the
+// handler function's length to determine this!
+//
+function wrap(handler, isMiddleware) {
     function callback(next) {
-        return function (err) {
+        return function (err, result) {
             if (err) return next(err);
-            // otherwise, if successful, don't call next
+            if (isMiddleware) {
+                // middleware: default to continuing, unless false returned.
+                if (result !== false) return next();
+            } else {
+                // routes: default to *not* continuing, unless false returned.
+                if (result === false) return next();
+            }
         };
     }
 
@@ -26,7 +42,7 @@ function wrap(handler) {
 var app = express.HTTPServer.prototype;
 var verbs = ['all', 'get', 'post', 'put', 'del', 'error'];
 
-function patch(verb) {
+function patch(verb, isMiddleware) {
     var origAppVerb = app[verb];
     app[verb] = function () {
         // if a handler function is given, it'll be the last argument:
@@ -35,7 +51,7 @@ function patch(verb) {
 
         // if there is one, wrap it:
         if (typeof lastArg === 'function') {
-            arguments[last] = wrap(lastArg);
+            arguments[last] = wrap(lastArg, isMiddleware);
         }
 
         // finally, call the original method now with the updated args:
@@ -46,3 +62,6 @@ function patch(verb) {
 for (var i = 0; i < verbs.length; i++) {
     patch(verbs[i]);
 }
+
+// also patch middleware functions:
+patch('use', true);

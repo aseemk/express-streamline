@@ -38,9 +38,25 @@ exports['express-streamline'] = {
 
     'should properly handle middleware errors': function (next) {
         req(app)
-            .get('/foo/bar/baz?error=middleware')
+            .get('/foo/bar/baz?middleware=error')
             .expect(500)
             .expect(/middleware error/i)
+            .end(next)
+    },
+
+    'should support stopping early from middleware': function (next) {
+        req(app)
+            .get('/foo/bar/baz?middleware=stop')
+            .expect(200)
+            .expect(/middleware stopped/i)
+            .end(next)
+    },
+
+    'should support falling through routes': function (next) {
+        req(app)
+            .get('/next')
+            .expect(200)
+            .expect(/fell through/i)
             .end(next)
     }
 
