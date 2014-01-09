@@ -1,5 +1,12 @@
-// Usage (defaults to random port):
-// _node example.js [<port>]
+// example.js
+// Either run directly, or require() for testing.
+//
+// Run directly (defaults to random port):
+//  node example.js [<port>]
+//
+// Require for testing:
+//  var app = require('./example');
+//  app.listen(port, function () { ... });
 //
 // Examples:
 // - /, /10, /500, etc. - return response after 0, 10, 500, etc. milliseconds
@@ -41,9 +48,13 @@ app.get('/error', function (req, res, _) {
     throw new Error('Route error.');
 });
 
-app.listen(process.argv[2] || 0, function () {
-    console.log(
-        'express-alias example server listening at http://localhost:%d/...',
-        this.address().port
-    );
-});
+module.exports = app;
+
+if (module === require.main) {
+    app.listen(process.argv[2] || 0, function () {
+        console.log(
+            'express-alias example server listening at http://localhost:%d/...',
+            this.address().port
+        );
+    });
+}
