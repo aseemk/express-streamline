@@ -58,6 +58,14 @@ exports['express-streamline'] = {
             .expect(200)
             .expect(/fell through/i)
             .end(next)
+    },
+
+    'should support full set of HTTP methods': function (next) {
+        req(app)
+            .patch('/resource')
+            .expect(200)
+            .expect(/resource patched/i)
+            .end(next)
     }
 
 };

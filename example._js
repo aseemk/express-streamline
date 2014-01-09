@@ -9,11 +9,12 @@
 //  app.listen(port, function () { ... });
 //
 // Examples:
-// - /, /10, /500, etc. - return response after 0, 10, 500, etc. milliseconds
-// - /error - return 500 from route error
-// - /anything?middleware=error - return 500 from middleware error
-// - /anything?middleware=stop - return 200 from middleware
-// - /next - return 200 from fall-through routes
+// - GET /, /10, /500, etc. - return response after 0, 10, 500, etc. ms
+// - GET /error - return 500 from route error
+// - GET /anything?middleware=error - return 500 from middleware error
+// - GET /anything?middleware=stop - return 200 from middleware
+// - GET /next - return 200 from fall-through routes
+// - PATCH /resource - return 200 from PATCH handler
 //
 
 var crypto = require('crypto');
@@ -65,6 +66,12 @@ app.get('/next', function (req, res, _) {
 app.get('/next', function (req, res, _) {
     setTimeout(_, 5);
     res.send('Fell through to another matching route.');
+});
+
+// Example of method (verb) coverage:
+app.patch('/resource', function (req, res, _) {
+    setTimeout(_, 5);
+    res.send('Resource patched.');
 });
 
 module.exports = app;

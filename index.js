@@ -38,10 +38,13 @@ function wrap(handler, isMiddleware) {
     }
 }
 
-// we monkey-patch the route and error methods via Express's prototype:
+// TODO Patch HTTPS servers too.
 var app = express.HTTPServer.prototype;
-var verbs = ['all', 'get', 'post', 'put', 'del', 'error'];
 
+//
+// Helper function to patch app[verb], to wrap passed-in Streamline-style
+// handlers (req, res, _) to the style Express needs (req, res, next).
+//
 function patch(verb, isMiddleware) {
     var origAppVerb = app[verb];
     app[verb] = function () {
@@ -59,9 +62,12 @@ function patch(verb, isMiddleware) {
     };
 }
 
-for (var i = 0; i < verbs.length; i++) {
-    patch(verbs[i]);
-}
+// Patch all route methods, e.g. app.get(), app.post(), etc.
+// HACK Is there a better way of covering all methods than to reach into
+// Express's implementation to get these methods?
+require('express/lib/router/methods')
+    .concat('all', 'del', 'error')
+    .forEach(function (verb) { patch(verb); });
 
 // also patch middleware functions:
 patch('use', true);
