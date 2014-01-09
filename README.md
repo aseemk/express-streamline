@@ -1,3 +1,5 @@
+[![Travis build status](https://travis-ci.org/aseemk/express-streamline.png?branch=master)](https://travis-ci.org/aseemk/express-streamline)
+
 # Express-Streamline
 
 Patch for [Express](http://expressjs.com/) to add support for
