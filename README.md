@@ -3,7 +3,7 @@
 Patch for [Express](http://expressjs.com/) to add support for
 [Streamline](https://github.com/Sage/streamlinejs) syntax in Express apps.
 
-Currently only supports Express 2. Express 3 support is in the works.
+Supports both Express 2 and Express 3.
 
 ## Example
 
@@ -78,13 +78,6 @@ app.use(function (req, res, _) {
 ```
 
 If you run into any issues, [file a bug](https://github.com/aseemk/express-streamline/issues/)!
-
-## TODO
-
-This only patches HTTP servers; patch HTTPS ones too. Is there a way to do
-that in a generic way?
-
-Investigate support for Express 3 / Connect 2.
 
 ## License
 
