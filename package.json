@@ -4,6 +4,9 @@
 , "author": "Aseem Kishore <aseem.kishore@gmail.com>"
 , "dependencies": {}
 , "devDependencies": {}
+, "peerDependencies":
+  { "express": "2.x"
+  }
 , "engines":
   { "node": "*"
   }
