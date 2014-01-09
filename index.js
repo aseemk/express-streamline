@@ -38,8 +38,9 @@ function wrap(handler, isMiddleware) {
     }
 }
 
-// TODO Patch HTTPS servers too.
-var app = express.HTTPServer.prototype;
+// Express's prototype, with back-compat for Express 2.
+// TODO This only patches HTTP servers in Express 2, not HTTPS ones.
+var app = express.application || express.HTTPServer.prototype;
 
 //
 // Helper function to patch app[verb], to wrap passed-in Streamline-style
@@ -47,6 +48,12 @@ var app = express.HTTPServer.prototype;
 //
 function patch(verb, isMiddleware) {
     var origAppVerb = app[verb];
+
+    // minor: don't patch verbs that aren't implemented by Express:
+    if (typeof origAppVerb !== 'function') {
+        return;
+    }
+
     app[verb] = function () {
         // if a handler function is given, it'll be the last argument:
         var last = arguments.length - 1;
@@ -63,11 +70,11 @@ function patch(verb, isMiddleware) {
 }
 
 // Patch all route methods, e.g. app.get(), app.post(), etc.
-// HACK Is there a better way of covering all methods than to reach into
-// Express's implementation to get these methods?
-require('express/lib/router/methods')
-    .concat('all', 'del', 'error')
-    .forEach(function (verb) { patch(verb); });
+require('methods').concat('all', 'del', 'error').forEach(function (verb) {
+    patch(verb, false);
+});
 
-// also patch middleware functions:
-patch('use', true);
+// Also patch middleware functions:
+['use', 'param'].forEach(function (verb) {
+    patch(verb, true);
+});

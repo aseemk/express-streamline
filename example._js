@@ -19,7 +19,7 @@
 
 var crypto = require('crypto');
 var express = require('./');
-var app = express.createServer();
+var app = express();
 
 app.use(express.logger('dev'));
 app.use(express.responseTime());
@@ -79,7 +79,7 @@ module.exports = app;
 if (module === require.main) {
     app.listen(process.argv[2] || 0, function () {
         console.log(
-            'express-alias example server listening at http://localhost:%d/...',
+            'express-streamline example server listening at http://localhost:%d/...',
             this.address().port
         );
     });

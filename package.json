@@ -2,15 +2,17 @@
 , "description": "Express monkey-patch to support Streamline syntax."
 , "version": "0.2.0"
 , "author": "Aseem Kishore <aseem.kishore@gmail.com>"
-, "dependencies": {}
+, "dependencies":
+  { "methods": "~0.1"
+  }
 , "devDependencies":
-  { "express": "2.x"
+  { "express": "3.x"
   , "mocha": "1.x"
   , "streamline": "*"
   , "supertest": "~0.8"
   }
 , "peerDependencies":
-  { "express": "2.x"
+  { "express": "*"
   }
 , "engines":
   { "node": "*"
