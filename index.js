@@ -14,13 +14,23 @@ module.exports = express = require('express');
 // handler function's length to determine this!
 //
 function wrap(handler, isMiddleware) {
+    var isErrorHandler = handler.length >= 4;
+
+    if (handler.length > 4) {
+        console.warn(
+            'Warning: Express handler accepting >4 args registered; ' +
+            'express-streamline doesn’t know how to handle these. ' +
+            'Trying anyway...'
+        );
+    }
+
     function callback(next) {
         return function (err, result) {
             if (err) return next(err);
 
             // in Express 3, error handlers are registered as middleware,
             // but we want to treat them like route handlers here.
-            if (isMiddleware && handler.length < 4) {
+            if (isMiddleware && !isErrorHandler) {
                 // middleware: default to continuing, unless false returned.
                 if (result !== false) return next();
             } else {
@@ -30,13 +40,13 @@ function wrap(handler, isMiddleware) {
         };
     }
 
-    if (handler.length >= 4) {
+    if (isErrorHandler) {
         return function (err, req, res, next) {
-            return handler(err, req, res, callback(next));
+            return handler.call(this, err, req, res, callback(next));
         }
     } else {
         return function (req, res, next) {
-            return handler(req, res, callback(next));
+            return handler.call(this, req, res, callback(next));
         }
     }
 }
