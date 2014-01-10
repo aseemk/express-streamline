@@ -17,7 +17,10 @@ function wrap(handler, isMiddleware) {
     function callback(next) {
         return function (err, result) {
             if (err) return next(err);
-            if (isMiddleware) {
+
+            // in Express 3, error handlers are registered as middleware,
+            // but we want to treat them like route handlers here.
+            if (isMiddleware && handler.length < 4) {
                 // middleware: default to continuing, unless false returned.
                 if (result !== false) return next();
             } else {

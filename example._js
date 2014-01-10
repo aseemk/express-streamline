@@ -74,6 +74,12 @@ app.patch('/resource', function (req, res, _) {
     res.send('Resource patched.');
 });
 
+// Example of error handler:
+app.use(function (err, req, res, _) {
+    setTimeout(_, 5);
+    res.send(500, err.message);
+});
+
 module.exports = app;
 
 if (module === require.main) {
