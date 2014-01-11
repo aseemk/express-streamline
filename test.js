@@ -4,7 +4,7 @@ var req = require('supertest');
 
 exports['express-streamline'] = {
 
-    'should generally work': function (next) {
+    'should properly handle async routes and middleware': function (next) {
         req(app)
             .get('/')
             .expect(200)
@@ -12,10 +12,10 @@ exports['express-streamline'] = {
             .end(next)
     },
 
-    'should properly handle async calls': function (next) {
+    'should properly handle async params': function (next) {
         var ms = 200;
         req(app)
-            .get('/' + ms)
+            .get('/delay/' + ms)
             .expect(200)
             .end(function (err, res) {
                 assert.ifError(err);
@@ -57,6 +57,14 @@ exports['express-streamline'] = {
             .get('/next')
             .expect(200)
             .expect(/fell through/i)
+            .end(next)
+    },
+
+    'should support errors from app.param': function (next) {
+        req(app)
+            .get('/error/param')
+            .expect(500)
+            .expect(/param error/i)
             .end(next)
     },
 

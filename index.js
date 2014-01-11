@@ -1,26 +1,45 @@
 module.exports = express = require('express');
 
 //
-// Helper funciton to wraps the given Streamline-style handler (req, res, _)
+// Helper function to wraps the given Streamline-style handler (req, res, _)
 // to the style Express requires (req, res, next).
+//
 // Returns the wrapped (req, res, next) handler for Express.
 //
-// If isMiddleware is true, the default action will be to continue (i.e. call
-// next) after the handler, unless the handler explicitly returns false.
-// Otherwise, the default action is to *not* continue, unless the handler
-// explicitly returns false.
+// Supports other types of handlers too, e.g. with different signatures, via
+// the `verb` param. Non-route verbs include `use` and `param`.
 //
-// Note that error handlers have an extra argument, and Express examines the
-// handler function's length to determine this!
+// Middleware handlers (`use`) have the same signature as route handlers, but
+// unlike route handlers, `next()` is called by default.
 //
-function wrap(handler, isMiddleware) {
-    var isErrorHandler = handler.length >= 4;
+// Param handlers also call `next()` by default, but their signature is
+// (req, res, _, param, key).
+//
+// Both route handlers and middleware handlers can be error handlers, with
+// the signature (err, req, res, _). This is detected by the handler arity.
+//
+// (Express 2 had an explicit `error` verb. That works too.)
+//
+// All handlers can override the default next() behavior by explicitly
+// returning true to call next() or false to not call next().
+//
+function wrap(handler, verb) {
+    var isErrorHandler = (verb === 'error') ||
+        (verb !== 'param' && handler.length >= 4);
 
-    if (handler.length > 4) {
+    // unify express 2 and 3 to imaginary 'error' verb:
+    if (isErrorHandler) {
+        verb = 'error';
+    }
+
+    var maxArgs = verb === 'param' ? 5 : 4;
+    if (handler.length > maxArgs) {
+        var handlerStr = handler.toString().replace(/(^|\n)/g, '$1| ');
         console.warn(
-            'Warning: Express handler accepting >4 args registered; ' +
-            'express-streamline doesn’t know how to handle these. ' +
-            'Trying anyway...'
+            'Warning: Express app.%s() handler registered with >%d args. ' +
+            'Express-streamline doesn’t know how to handle these; ' +
+            'truncating to %d args.\n\n%s\n',
+            verb, maxArgs, maxArgs, handlerStr
         );
     }
 
@@ -28,26 +47,38 @@ function wrap(handler, isMiddleware) {
         return function (err, result) {
             if (err) return next(err);
 
-            // in Express 3, error handlers are registered as middleware,
-            // but we want to treat them like route handlers here.
-            if (isMiddleware && !isErrorHandler) {
-                // middleware: default to continuing, unless false returned.
-                if (result !== false) return next();
-            } else {
-                // routes: default to *not* continuing, unless true returned.
-                if (result === true) return next();
+            var callNext = null;
+
+            // handlers can explicitly return true or false to specify:
+            if (typeof result === 'boolean') {
+                callNext = result;
+            }
+
+            // otherwise, the default is true for middleware and param
+            // handlers, false for route and error handlers:
+            if (typeof callNext !== 'boolean') {
+                callNext = (verb === 'use') || (verb === 'param');
+            }
+
+            if (callNext) {
+                return next();
             }
         };
     }
 
-    if (isErrorHandler) {
-        return function (err, req, res, next) {
-            return handler.call(this, err, req, res, callback(next));
-        }
-    } else {
-        return function (req, res, next) {
-            return handler.call(this, req, res, callback(next));
-        }
+    switch (verb) {
+        case 'param':
+            return function (req, res, next, param, key) {
+                return handler.call(this, req, res, callback(next), param, key);
+            }
+        case 'error':
+            return function (err, req, res, next) {
+                return handler.call(this, err, req, res, callback(next));
+            }
+        default:
+            return function (req, res, next) {
+                return handler.call(this, req, res, callback(next));
+            }
     }
 }
 
@@ -59,7 +90,7 @@ var app = express.application || express.HTTPServer.prototype;
 // Helper function to patch app[verb], to wrap passed-in Streamline-style
 // handlers (req, res, _) to the style Express needs (req, res, next).
 //
-function patch(verb, isMiddleware) {
+function patch(verb) {
     var origAppVerb = app[verb];
 
     // minor: don't patch verbs that aren't implemented by Express:
@@ -74,7 +105,7 @@ function patch(verb, isMiddleware) {
 
         // if there is one, wrap it:
         if (typeof lastArg === 'function') {
-            arguments[last] = wrap(lastArg, isMiddleware);
+            arguments[last] = wrap(lastArg, verb);
         }
 
         // finally, call the original method now with the updated args:
@@ -82,12 +113,8 @@ function patch(verb, isMiddleware) {
     };
 }
 
-// Patch all route methods, e.g. app.get(), app.post(), etc.
-require('methods').concat('all', 'del', 'error').forEach(function (verb) {
-    patch(verb, false);
-});
-
-// Also patch middleware functions:
-['use', 'param'].forEach(function (verb) {
-    patch(verb, true);
-});
+// Patch all app methods, e.g. app.get(), app.post(), etc.
+require('methods').concat('all', 'del', 'error', 'use', 'param')
+    .forEach(function (verb) {
+        patch(verb);
+    });
