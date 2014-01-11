@@ -98,3 +98,12 @@ MIT. &copy; 2012-2014 Aseem Kishore.
 
 [TJ Holowaychuk](https://github.com/visionmedia) for the awesome Express, and
 [Bruno Jouhier](https://github.com/bjouhier) for the awesome Streamline.
+
+[Seth Yuan](https://github.com/sethyuan)'s
+[`streamline-express`](https://github.com/sethyuan/streamline-express) for the
+inspiration and motivation.
+`streamline-express` has supported Express 3 for longer than this module, and
+it currently also supports more advanced Express 3 features (like passing
+multiple Streamlined handlers to the same `app.verb` call).
+I believe this module has a cleaner API and more robust implementation,
+however, but I'm biased. =) Both modules get the job done just fine!
