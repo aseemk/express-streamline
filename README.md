@@ -57,10 +57,18 @@ Then, you can write any and all Express handlers in Streamline syntax by just
 replacing `next` with `_`.
 
 ```js
+// middleware handlers:
 app.use(function (req, res, _) { ... });
-app.get(function (req, res, _) { ... });
-app.post(function (req, res, _) { ... });
-app.error(function (err, req, res, _) { ... });
+app.param('user', function (req, res, _, user) { ... });
+
+// route handlers:
+app.get('/:user', function (req, res, _) { ... });
+app.post('/:user', function (req, res, _) { ... });
+// ... (all verbs supported)
+
+// error handlers:
+app.use(function (err, req, res, _) { ... });
+app.error(function (err, req, res, _) { ... }); // Express 2 only
 ```
 
 By default, Streamlined middleware handlers will continue to the `next`

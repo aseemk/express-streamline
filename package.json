@@ -1,6 +1,6 @@
 { "name": "express-streamline"
 , "description": "Express monkey-patch to support Streamline syntax."
-, "version": "0.4.0"
+, "version": "0.4.1"
 , "author": "Aseem Kishore <aseem.kishore@gmail.com>"
 , "dependencies":
   { "methods": "~0.1"
