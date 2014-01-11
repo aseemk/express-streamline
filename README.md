@@ -63,18 +63,19 @@ app.post(function (req, res, _) { ... });
 app.error(function (err, req, res, _) { ... });
 ```
 
-One thing to note: by default, **middleware handlers will *always* continue to
-the next middleware, while route and error handlers *never* will**. This is
-generally what you want, but **if you want to override this default behavior,
-just `return false`** in your handler.
+By default, Streamlined middleware handlers will continue to the `next`
+middleware, while Streamlined route and error handlers won't.
+This is generally what you want, but you can specify what you want by
+explicitly `return`'ing `true` or `false`.
 
 ```js
-// middleware to short-circuit OPTIONS requests,
-// but allows all others to continue:
+// middleware to blacklist banned IP addresses,
+// but allow all other requests to pass through:
 app.use(function (req, res, _) {
-    if (req.method === 'OPTIONS') {
-        res.header('Allow', 'HEAD,GET,POST');
-        return false;
+    var isBanned = dbs.bannedIPs.search(req.ips, _).length > 0;
+    if (isBanned) {
+        res.send(403);
+        return false;   // end the response
     }
 });
 ```

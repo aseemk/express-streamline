@@ -34,8 +34,8 @@ function wrap(handler, isMiddleware) {
                 // middleware: default to continuing, unless false returned.
                 if (result !== false) return next();
             } else {
-                // routes: default to *not* continuing, unless false returned.
-                if (result === false) return next();
+                // routes: default to *not* continuing, unless true returned.
+                if (result === true) return next();
             }
         };
     }

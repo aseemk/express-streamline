@@ -60,7 +60,7 @@ app.get('/error', function (req, res, _) {
 // Route example (fall-through):
 app.get('/next', function (req, res, _) {
     setTimeout(_, 5);
-    return false;
+    return true;
 });
 
 app.get('/next', function (req, res, _) {
