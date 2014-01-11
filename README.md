@@ -73,8 +73,8 @@ app.error(function (err, req, res, _) { ... }); // Express 2 only
 
 By default, Streamlined middleware handlers will continue to the `next`
 middleware, while Streamlined route and error handlers won't.
-This is generally what you want, but you can specify what you want by
-explicitly `return`'ing `true` or `false`.
+This is generally what you want, but **you can specify whether `next` is
+called by explicitly returning `true` or `false`**.
 
 ```js
 // middleware to blacklist banned IP addresses,
