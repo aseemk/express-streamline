@@ -1,7 +1,15 @@
 module.exports = express = require('express');
 
+// support streamline global context
+var streamlineGlobal = null;
+try {
+    streamlineGlobal = require('streamline/lib/globals');
+} catch (err) {
+     // no action required if we cannot find the lib
+}
+
 //
-// Helper function to wraps the given Streamline-style handler (req, res, _)
+// Helper function to wrap the given Streamline-style handler (req, res, _)
 // to the style Express requires (req, res, next).
 //
 // Returns the wrapped (req, res, next) handler for Express.
@@ -84,21 +92,21 @@ function wrap(handler, verb) {
 
 // Express's prototype, with back-compat for Express 2.
 // TODO This only patches HTTP servers in Express 2, not HTTPS ones.
-var app = express.application || express.HTTPServer.prototype;
+var proto = express.application || express.HTTPServer.prototype;
 
 //
-// Helper function to patch app[verb], to wrap passed-in Streamline-style
+// Helper function to patch proto[verb], to wrap passed-in Streamline-style
 // handlers (req, res, _) to the style Express needs (req, res, next).
 //
 function patch(verb) {
-    var origAppVerb = app[verb];
+    var origProtoVerb = proto[verb];
 
     // minor: don't patch verbs that aren't implemented by Express:
-    if (typeof origAppVerb !== 'function') {
+    if (typeof origProtoVerb !== 'function') {
         return;
     }
 
-    app[verb] = function () {
+    proto[verb] = function () {
         // if a handler function is given, it'll be the last argument:
         var last = arguments.length - 1;
         var lastArg = arguments[last];
@@ -109,12 +117,30 @@ function patch(verb) {
         }
 
         // finally, call the original method now with the updated args:
-        return origAppVerb.apply(this, arguments);
+        return origProtoVerb.apply(this, arguments);
     };
 }
 
-// Patch all app methods, e.g. app.get(), app.post(), etc.
+// Patch all proto methods, e.g. proto.get(), proto.post(), etc.
 require('methods').concat('all', 'del', 'error', 'use', 'param')
     .forEach(function (verb) {
         patch(verb);
     });
+
+// Patch app.handle to reset global context before handling request.
+// Patch in proto.init() b/c that is when the original connect app is merged
+// with express'
+if (streamlineGlobal) {
+    var oldProtoInit = proto.init;
+
+    proto.init = function() {
+        var oldAppHandle = this.handle;
+
+        this.handle = function() {
+            streamlineGlobal.context = {} // reset the global streamline
+            return oldAppHandle.apply(this, arguments);
+        };
+
+        return oldProtoInit.apply(this, arguments)
+    };
+}
