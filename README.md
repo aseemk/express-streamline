@@ -90,6 +90,10 @@ app.use(function (req, res, _) {
 
 If you run into any issues, [file a bug](https://github.com/aseemk/express-streamline/issues/)!
 
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md).
+
 ## License
 
 MIT. &copy; 2012-2014 Aseem Kishore.
