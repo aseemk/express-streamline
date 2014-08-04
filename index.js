@@ -1,7 +1,15 @@
 module.exports = express = require('express');
 
+// support streamline global context
+var streamlineGlobal = null;
+try {
+    streamlineGlobal = require('streamline/lib/globals');
+} catch (err) {
+     // no action required if we cannot find the lib
+}
+
 //
-// Helper function to wraps the given Streamline-style handler (req, res, _)
+// Helper function to wrap the given Streamline-style handler (req, res, _)
 // to the style Express requires (req, res, next).
 //
 // Returns the wrapped (req, res, next) handler for Express.
@@ -84,21 +92,21 @@ function wrap(handler, verb) {
 
 // Express's prototype, with back-compat for Express 2.
 // TODO This only patches HTTP servers in Express 2, not HTTPS ones.
-var app = express.application || express.HTTPServer.prototype;
+var proto = express.application || express.HTTPServer.prototype;
 
 //
-// Helper function to patch app[verb], to wrap passed-in Streamline-style
+// Helper function to patch proto[verb], to wrap passed-in Streamline-style
 // handlers (req, res, _) to the style Express needs (req, res, next).
 //
 function patch(verb) {
-    var origAppVerb = app[verb];
+    var origProtoVerb = proto[verb];
 
     // minor: don't patch verbs that aren't implemented by Express:
-    if (typeof origAppVerb !== 'function') {
+    if (typeof origProtoVerb !== 'function') {
         return;
     }
 
-    app[verb] = function () {
+    proto[verb] = function () {
         // if a handler function is given, it'll be the last argument:
         var last = arguments.length - 1;
         var lastArg = arguments[last];
@@ -109,12 +117,31 @@ function patch(verb) {
         }
 
         // finally, call the original method now with the updated args:
-        return origAppVerb.apply(this, arguments);
+        return origProtoVerb.apply(this, arguments);
     };
 }
 
-// Patch all app methods, e.g. app.get(), app.post(), etc.
+// Patch all proto methods, e.g. proto.get(), proto.post(), etc.
 require('methods').concat('all', 'del', 'error', 'use', 'param')
     .forEach(function (verb) {
         patch(verb);
     });
+
+// Patch app.handle() to reset Streamline's global context at the beginning of
+// every request. This method is only present in Connect's prototype, *not*
+// Express's, so we patch proto.init(), which is called on app creation.
+// https://github.com/strongloop/express/blob/3.15.2/lib/express.js#L39
+if (streamlineGlobal) {
+    var origProtoInit = proto.init;
+
+    proto.init = function() {
+        var origAppHandle = this.handle;
+
+        this.handle = function() {
+            streamlineGlobal.context = {};
+            return origAppHandle.apply(this, arguments);
+        };
+
+        return origProtoInit.apply(this, arguments)
+    };
+}

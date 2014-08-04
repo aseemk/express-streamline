@@ -17,11 +17,15 @@
 // - GET /next - return 200 from fall-through routes
 // - GET /error/param - return 500 from param error
 // - PATCH /resource - return 200 from PATCH handler
+// - GET /global - return global context from GET handler
+// - GET /global?value='foo' - set global context from middleware and
+//   return from route handler".
 //
 
 var crypto = require('crypto');
 var express = require('./');
 var app = express();
+var streamlineGlobal = require('streamline/lib/globals');
 
 app.use(express.logger('dev'));
 app.use(express.responseTime());
@@ -42,6 +46,14 @@ app.use(function (req, res, _) {
             return false;
         default:
             return;
+    }
+});
+
+// Example of middleware setting streamline global context
+app.use(function (req, res, _) {
+    queryValue = req.query['value']
+    if (queryValue) {
+        streamlineGlobal.context['value'] = queryValue;
     }
 });
 
@@ -103,6 +115,12 @@ app.patch('/resource', function (req, res, _) {
 app.use(function (err, req, res, _) {
     setTimeout(_, 5);
     res.send(500, err.message);
+});
+
+// Example of retrieving streamline global context
+app.get('/global', function (req, res, _) {
+    setTimeout(_, 5);
+    res.send(streamlineGlobal.context);
 });
 
 module.exports = app;

@@ -74,6 +74,22 @@ exports['express-streamline'] = {
             .expect(200)
             .expect(/resource patched/i)
             .end(next)
+    },
+
+    'should support middleware setting streamline global': function (next) {
+        req(app)
+            .get('/global?value=foo')
+            .expect(200)
+            .expect({value:'foo'})
+            .end(next)
+    },
+
+    'should support resetting global streamline context': function (next) {
+        req(app)
+            .get('/global')
+            .expect(200)
+            .expect({})
+            .end(next)
     }
 
 };
