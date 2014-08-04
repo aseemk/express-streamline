@@ -88,6 +88,22 @@ app.use(function (req, res, _) {
 });
 ```
 
+This module also supports Streamline's smart
+[global context](https://github.com/Sage/streamlinejs/blob/master/lib/globals.md).
+If present, the context is reset for every request, so data can safely be
+added to it without affecting other requests.
+
+```js
+var globals = require('streamline/lib/globals');
+
+// middleware to set a global `locale` variable on every request,
+// for lower-level modules to use:
+app.use(function (req, res, __) {
+    // parse locale... then:
+    globals.context.locale = locale;
+});
+```
+
 If you run into any issues, [file a bug](https://github.com/aseemk/express-streamline/issues/)!
 
 ## Changelog

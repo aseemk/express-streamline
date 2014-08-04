@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.5.0 (2014-08-03)
+
+- #12 via @chanadian: Add support for Streamline's global context.
+
 ### 0.4.1 (2014-01-11)
 
 - #7: Add support for `app.param()`.
