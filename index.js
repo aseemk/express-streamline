@@ -127,20 +127,21 @@ require('methods').concat('all', 'del', 'error', 'use', 'param')
         patch(verb);
     });
 
-// Patch app.handle to reset global context before handling request.
-// Patch in proto.init() b/c that is when the original connect app is merged
-// with express'
+// Patch app.handle() to reset Streamline's global context at the beginning of
+// every request. This method is only present in Connect's prototype, *not*
+// Express's, so we patch proto.init(), which is called on app creation.
+// https://github.com/strongloop/express/blob/3.15.2/lib/express.js#L39
 if (streamlineGlobal) {
-    var oldProtoInit = proto.init;
+    var origProtoInit = proto.init;
 
     proto.init = function() {
-        var oldAppHandle = this.handle;
+        var origAppHandle = this.handle;
 
         this.handle = function() {
-            streamlineGlobal.context = {} // reset the global streamline
-            return oldAppHandle.apply(this, arguments);
+            streamlineGlobal.context = {};
+            return origAppHandle.apply(this, arguments);
         };
 
-        return oldProtoInit.apply(this, arguments)
+        return origProtoInit.apply(this, arguments)
     };
 }

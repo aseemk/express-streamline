@@ -18,7 +18,8 @@
 // - GET /error/param - return 500 from param error
 // - PATCH /resource - return 200 from PATCH handler
 // - GET /global - return global context from GET handler
-// - GET /global?context=true - set and return global context from middleware
+// - GET /global?value='foo' - set global context from middleware and
+//   return from route handler".
 //
 
 var crypto = require('crypto');
@@ -50,10 +51,9 @@ app.use(function (req, res, _) {
 
 // Example of middleware setting streamline global context
 app.use(function (req, res, _) {
-    if(req.query['context']) {
-        streamlineGlobal.context = { context: true };
-        res.send(streamlineGlobal.context);
-        return false;
+    queryValue = req.query['value']
+    if (queryValue) {
+        streamlineGlobal.context['value'] = queryValue;
     }
 });
 

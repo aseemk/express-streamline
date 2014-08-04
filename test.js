@@ -78,9 +78,9 @@ exports['express-streamline'] = {
 
     'should support middleware setting streamline global': function (next) {
         req(app)
-            .get('/global?context=true')
+            .get('/global?value=foo')
             .expect(200)
-            .expect({context:true})
+            .expect({value:'foo'})
             .end(next)
     },
 
