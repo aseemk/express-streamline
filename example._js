@@ -14,12 +14,11 @@
 // - GET /error - return 500 from route error
 // - GET /anything?middleware=error - return 500 from middleware error
 // - GET /anything?middleware=stop - return 200 from middleware
+// - GET /anything?global=foo - set Streamline global `value` from middleware
 // - GET /next - return 200 from fall-through routes
 // - GET /error/param - return 500 from param error
+// - GET /global - return Streamline global context
 // - PATCH /resource - return 200 from PATCH handler
-// - GET /global - return global context from GET handler
-// - GET /global?value='foo' - set global context from middleware and
-//   return from route handler".
 //
 
 var crypto = require('crypto');
@@ -49,11 +48,11 @@ app.use(function (req, res, _) {
     }
 });
 
-// Example of middleware setting streamline global context
+// Example of middleware setting Streamline's global context:
 app.use(function (req, res, _) {
-    queryValue = req.query['value']
+    var queryValue = req.query['global'];
     if (queryValue) {
-        streamlineGlobal.context['value'] = queryValue;
+        streamlineGlobal.context.value = queryValue;
     }
 });
 
@@ -105,6 +104,12 @@ app.get('/error/:err', function (req, res, _) {
     throw new Error('This should never get hit.');
 });
 
+// Example of retrieving streamline global context
+app.get('/global', function (req, res, _) {
+    setTimeout(_, 5);
+    res.send(streamlineGlobal.context);
+});
+
 // Example of method (verb) coverage:
 app.patch('/resource', function (req, res, _) {
     setTimeout(_, 5);
@@ -115,12 +120,6 @@ app.patch('/resource', function (req, res, _) {
 app.use(function (err, req, res, _) {
     setTimeout(_, 5);
     res.send(500, err.message);
-});
-
-// Example of retrieving streamline global context
-app.get('/global', function (req, res, _) {
-    setTimeout(_, 5);
-    res.send(streamlineGlobal.context);
 });
 
 module.exports = app;

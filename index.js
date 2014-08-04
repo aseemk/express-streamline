@@ -1,12 +1,13 @@
 module.exports = express = require('express');
 
-// support streamline global context
+// We support resetting Streamline's global context, but that requires (no pun
+// intended) `require()`'ing Streamline, which may not be present at runtime,
+// or at least not in our node_modules path. So be robust to that.
+// TODO: Does this work in Streamline's "standalone" mode? Is that a use case?
 var streamlineGlobal = null;
 try {
     streamlineGlobal = require('streamline/lib/globals');
-} catch (err) {
-     // no action required if we cannot find the lib
-}
+} catch (err) {}
 
 //
 // Helper function to wrap the given Streamline-style handler (req, res, _)
@@ -91,7 +92,7 @@ function wrap(handler, verb) {
 }
 
 // Express's prototype, with back-compat for Express 2.
-// TODO This only patches HTTP servers in Express 2, not HTTPS ones.
+// TODO: This only patches HTTP servers in Express 2, not HTTPS ones.
 var proto = express.application || express.HTTPServer.prototype;
 
 //
@@ -134,10 +135,10 @@ require('methods').concat('all', 'del', 'error', 'use', 'param')
 if (streamlineGlobal) {
     var origProtoInit = proto.init;
 
-    proto.init = function() {
+    proto.init = function () {
         var origAppHandle = this.handle;
 
-        this.handle = function() {
+        this.handle = function () {
             streamlineGlobal.context = {};
             return origAppHandle.apply(this, arguments);
         };
