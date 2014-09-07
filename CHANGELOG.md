@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.5.1 (2014-09-07)
+
+- #15: Fix falling through `all` routes.
+
 ### 0.5.0 (2014-08-03)
 
 - #12 via @chanadian: Add support for Streamline's global context.
