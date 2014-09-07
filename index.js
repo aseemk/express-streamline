@@ -123,7 +123,8 @@ function patch(verb) {
 }
 
 // Patch all proto methods, e.g. proto.get(), proto.post(), etc.
-require('methods').concat('all', 'del', 'error', 'use', 'param')
+// Important: we don't patch `all`, as that's just a simple wrapper.
+require('methods').concat('del', 'error', 'use', 'param')
     .forEach(function (verb) {
         patch(verb);
     });

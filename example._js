@@ -87,6 +87,12 @@ app.get('/next', function (req, res, _) {
     return true;
 });
 
+// Issue #15 (should be able to fall through w/ `all` too):
+app.all('/next', function (req, res, _) {
+    setTimeout(_, 1);
+    return true;
+});
+
 app.get('/next', function (req, res, _) {
     setTimeout(_, 1);
     res.send('Fell through to another matching route.');
