@@ -36,7 +36,7 @@ app.use(function (req, res, _) {
 
 // Middleware example (error, or don't continue):
 app.use(function (req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     switch (req.query['middleware']) {
         case 'error':
             throw new Error('Middleware error.');
@@ -58,14 +58,14 @@ app.use(function (req, res, _) {
 
 // Route example (normal):
 app.get('/', function (req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     res.send('Hello world!');
 });
 
 // Param example (normal):
 app.param('ms', function (req, res, _, ms) {
     if (ms.match(/\d+/)) {
-        setTimeout(_, 5);
+        setTimeout(_, 1);
         req.ms = parseInt(ms, 10);
     }
 });
@@ -77,25 +77,25 @@ app.get('/delay/:ms', function (req, res, _) {
 
 // Route example (error):
 app.get('/error', function (req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     throw new Error('Route error.');
 });
 
 // Route example (fall-through):
 app.get('/next', function (req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     return true;
 });
 
 app.get('/next', function (req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     res.send('Fell through to another matching route.');
 });
 
 // Param example (error):
 app.param('err', function (req, res, _, err) {
     if (err === 'param') {
-        setTimeout(_, 5);
+        setTimeout(_, 1);
         throw new Error('Param error.');
     }
 });
@@ -106,19 +106,19 @@ app.get('/error/:err', function (req, res, _) {
 
 // Example of retrieving streamline global context
 app.get('/global', function (req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     res.send(streamlineGlobal.context);
 });
 
 // Example of method (verb) coverage:
 app.patch('/resource', function (req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     res.send('Resource patched.');
 });
 
 // Example of error handler:
 app.use(function (err, req, res, _) {
-    setTimeout(_, 5);
+    setTimeout(_, 1);
     res.send(500, err.message);
 });
 
