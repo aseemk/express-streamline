@@ -4,6 +4,14 @@ var req = require('supertest');
 
 exports['express-streamline'] = {
 
+    'should properly mount subapps': function () {
+        var express = require('./');
+        var app = express();
+        var subapp = express();
+        app.use('/subapp', subapp);
+        assert.equal(subapp.parent, app);
+    },
+
     'should properly handle async routes and middleware': function (next) {
         req(app)
             .get('/')
