@@ -1,16 +1,12 @@
 sudo: false
 language: node_js
 node_js:
-    - "0.12"
-    - "0.11"
-    - "0.10"
-    - "0.8"
+  - "0.12"
+  - "0.10"
+  - "0.8"
 env:
-  - EXPRESS_VERSION=dev
-  - EXPRESS_VERSION=3
+  - EXPRESS_VERSION=5
   - EXPRESS_VERSION=4
+  - EXPRESS_VERSION=3
 before_script:
-  - if [[ ${EXPRESS_VERSION} == "dev" ]];
-    then npm install git://github.com/strongloop/express.git#5.x;
-    else npm install express@${EXPRESS_VERSION};
-    fi
+  - npm install express@${EXPRESS_VERSION};
