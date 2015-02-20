@@ -23,13 +23,13 @@
 
 var crypto = require('crypto');
 var express = require('./');
-var app = express();
+var logger = require('morgan');
+var responseTime = require('response-time');
 var streamlineGlobal = require('streamline/lib/globals');
 
-var logger = require('morgan');
-app.use(logger('dev'));
+var app = express();
 
-var responseTime = require('response-time')
+app.use(logger('dev'));
 app.use(responseTime());
 
 // Middleware example (normal):
