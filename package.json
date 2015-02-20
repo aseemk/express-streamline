@@ -6,7 +6,7 @@
     "streamline",
     "async"
   ],
-  "version": "0.5.2",
+  "version": "0.5.3",
   "author": "Aseem Kishore <aseem.kishore@gmail.com>",
   "dependencies": {
     "methods": "1.x"

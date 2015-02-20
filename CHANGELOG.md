@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.5.3 (2015-02-20)
+
+- #16 via @winniehell: Fix mounting sub-apps, i.e. `app.use(subApp)`.
+
 ### 0.5.2 (2015-02-20)
 
 - Nothing significant; just updating the readme and example for Express 4,
