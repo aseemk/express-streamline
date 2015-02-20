@@ -95,6 +95,22 @@ function wrap(handler, verb) {
 // TODO: This only patches HTTP servers in Express 2, not HTTPS ones.
 var proto = express.application || express.HTTPServer.prototype;
 
+// Checks whether fn is a request handler. Note that Express apps are excluded to avoid patching them below.
+// For more information see https://github.com/aseemk/express-streamline/pull/16.
+function isRequestHandler(fn) {
+    if (typeof fn !== 'function') {
+        return false;
+    }
+
+    // check if fn is an Express app
+    // condition taken from here: https://github.com/strongloop/express/blob/4.11.2/lib/application.js#L186
+    if (fn.handle && fn.set) {
+        return false;
+    }
+
+    return true;
+}
+
 //
 // Helper function to patch proto[verb], to wrap passed-in Streamline-style
 // handlers (req, res, _) to the style Express needs (req, res, next).
@@ -113,7 +129,7 @@ function patch(verb) {
         var lastArg = arguments[last];
 
         // if there is one, wrap it:
-        if (typeof lastArg === 'function') {
+        if (isRequestHandler(lastArg)) {
             arguments[last] = wrap(lastArg, verb);
         }
 
