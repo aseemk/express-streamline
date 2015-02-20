@@ -4,15 +4,15 @@
 , "version": "0.5.1"
 , "author": "Aseem Kishore <aseem.kishore@gmail.com>"
 , "dependencies":
-  { "methods": "0.1.x"
+  { "methods": "1.x"
   }
 , "devDependencies":
   { "express": "4.x"
-  , "mocha": "1.x"
+  , "mocha": "2.x"
   , "morgan": "1.x"
   , "response-time": "2.x"
   , "streamline": "0.10.x"
-  , "supertest": "0.8.x"
+  , "supertest": "0.15.x"
   }
 , "peerDependencies":
   { "express": "*"
