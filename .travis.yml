@@ -1,5 +1,11 @@
+sudo: false
 language: node_js
 node_js:
     - "0.11"
     - "0.10"
     - "0.8"
+env:
+  - EXPRESS_VERSION=3
+  - EXPRESS_VERSION=4
+before_script:
+  - npm install express@${EXPRESS_VERSION}

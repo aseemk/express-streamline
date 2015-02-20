@@ -26,8 +26,11 @@ var express = require('./');
 var app = express();
 var streamlineGlobal = require('streamline/lib/globals');
 
-app.use(express.logger('dev'));
-app.use(express.responseTime());
+var logger = require('morgan');
+app.use(logger('dev'));
+
+var responseTime = require('response-time')
+app.use(responseTime());
 
 // Middleware example (normal):
 app.use(function (req, res, _) {
@@ -125,7 +128,7 @@ app.patch('/resource', function (req, res, _) {
 // Example of error handler:
 app.use(function (err, req, res, _) {
     setTimeout(_, 1);
-    res.send(500, err.message);
+    res.status(500).send(err.message);
 });
 
 module.exports = app;
