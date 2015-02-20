@@ -1,5 +1,10 @@
 ## Changelog
 
+### 0.5.2 (2015-02-20)
+
+- Nothing significant; just updating the readme and example for Express 4,
+  along with one minor dependency update.
+
 ### 0.5.1 (2014-09-07)
 
 - #15: Fix falling through `all` routes.
