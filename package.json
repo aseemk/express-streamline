@@ -7,8 +7,10 @@
   { "methods": "~0.1"
   }
 , "devDependencies":
-  { "express": "3.x"
+  { "express": "4.x"
   , "mocha": "1.x"
+  , "morgan": "*"
+  , "response-time": "*"
   , "streamline": "*"
   , "supertest": "~0.8"
   }
