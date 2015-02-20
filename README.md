@@ -5,13 +5,13 @@
 Patch for [Express](http://expressjs.com/) to add support for
 [Streamline](https://github.com/Sage/streamlinejs) syntax in Express apps.
 
-Supports both Express 2 and Express 3.
+Supports Express 2 through 5.
 
 ## Example
 
 ```js
 var express = require('express-streamline');
-var app = express.createServer();
+var app = express();
 
 // ...
 
@@ -34,7 +34,7 @@ app.get('/photos', function (req, res, _) {
 ## Installation
 
 ```
-npm install express-streamline
+npm install express-streamline --save
 ```
 
 ## Usage
@@ -68,7 +68,6 @@ app.post('/:user', function (req, res, _) { ... });
 
 // error handlers:
 app.use(function (err, req, res, _) { ... });
-app.error(function (err, req, res, _) { ... }); // Express 2 only
 ```
 
 By default, Streamlined middleware handlers will continue to the `next`
@@ -80,7 +79,7 @@ called by explicitly returning `true` or `false`**.
 // middleware to blacklist banned IP addresses,
 // but allow all other requests to pass through:
 app.use(function (req, res, _) {
-    var isBanned = dbs.bannedIPs.search(req.ips, _).length > 0;
+    var isBanned = db.bannedIPs.search(req.ips, _).length > 0;
     if (isBanned) {
         res.send(403);
         return false;   // end the response
@@ -112,7 +111,7 @@ See [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 
-MIT. &copy; 2012-2014 Aseem Kishore.
+MIT. &copy; 2012-2015 Aseem Kishore.
 
 ## Credits
 
