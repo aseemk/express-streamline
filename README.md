@@ -1,4 +1,4 @@
-[![Travis build status](https://travis-ci.org/aseemk/express-streamline.png?branch=master)](https://travis-ci.org/aseemk/express-streamline)
+[![Travis build status](https://travis-ci.org/aseemk/express-streamline.svg?branch=master)](https://travis-ci.org/aseemk/express-streamline)
 
 # Express-Streamline
 
